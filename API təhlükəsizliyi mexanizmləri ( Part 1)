@@ -1,0 +1,29 @@
+Sistemlərin funskionallığı genişləndikcə yazılan veb servislərin də həcmi böyüyür. Funksionallığın təhlükəsizliklə tərs mütənasib olduğunu nəzərə alsaq ciddi təhlükəsizlik boşluqlarınını yaranması qaçılmazdır. Psixoloji tərəfdən məsələyə yanaşsaq bəzi şirkətlər daha çox üzdə olan veb servislərə ( web applicationda) diqqət edirlər, nəinki mobil application üçün nəzərdə tutulmuş veb servislərə. Hətta bəziləri heç birində diqqət etmir :) Aşağıda APİ təhlüəkəsizliyi ilə bağlı bəzi mövzulara toxunacağıq.
+
+Köhnə versiya veb servislərin əlçatanlığı
+
+Yazılan veb servislər versiya üzrə yüksəldikcə köhnə versiya veb servisləri ləğv etmək lazımdır. Misal üçün, userə aid məlumatı İD üzrə qaytaran veb servis hal-hazırda /api/v2/get_user_data/{user_id} -dir və köhnə versiyada yaranmış access control ilə bağlı boşluq bu versiyada aradan qaldırılmışdır . /api/v1/get_user_data/{user_id} veb servisi aktiv olarsa hücum edən şəxs köhnə versiyadakı boşluğu asanlıqla istismar edə bilər.
+
+İDOR (İnsecure Direct Object Reference) və ya BOLA (Broken Object Level Authorization)
+
+Bir zamanlar SQL injection boşluğunun sistemlərdə necə kabusa çevirildiyi hərkəsin yaddaşına gələr. Ki indi də az rast gəlinməyən bir boşluq növüdür. Hal-hazırda isə sistemlərdə onun yeni bir varisinə də çox rast gəlinir ki, bu boşluğun adı İDOR-dur. İDOR sadəcə olaraq parametr kimi ötürülən İD dəyərlərinin manipulyası vasitəsilə aşkarlana bilər. Bu boşluğun rast gəlindiyi funksionallıq vasitəsilə siz digər istifadəçilərə məxsus məlumatları əldə edə, dəyişdirə hətta silə də bilərsiniz. Nümunə:
+
+    Bir sistem təsəvvür edin. Şəxsi sənədlərinizi ora yükləyirsiniz və hər yüklənən fayla görə sistem o fayla xüsusi İD təyin edir (misal: 5). Və siz o fayla baxmaq istəyərkən /api/getUserDoc/5 servisinə sorğu gedir. Siz İD qismində göndərilən legitim İD nömrəsini dəyişərək digər şəxslərə aid məlumatları əldə edirsiniz.
+
+Yuxarıda bir İDOR boşluğu göstərilmişdir. Boşluğun qarşısının alınması üçün access control mexanizminin gücləndirilməsi kifayət edir.
+
+Bəzən İDOR ilə bağlı yoxlama apararkən 401 və ya 403 nömrəli xəta kodları ala bilərik. Bu zaman aşağıdakı bypass metodlarını da yoxlamağınız məqsədəuyğundur:
+
+    JSON tipi ilə göndərilən İD parametrinin array kimi göndəriləməsi. {“id”:111} → {“id”:[111]}
+    JSON tipi ilə göndərilən İD parametrinin eyni formada JSON stringi olması. {“id”:111} → {“id”:{“id”:111}}
+    URLdə iki ədəd İD parametrinin göndərilməsi. ?id=legitim İD&id=hədəf İD
+    JSON tipi ilə göndərilən İD parametrinin wildcar olaraq qeyd edilməsi. {“user_id”:”*”}
+
+SSRF (Server Side Request Forgery)
+
+SSRF boşluğu daha çox istifadəçidən əldə edilən URL adresinə sorğu göndərilib məlumat əldə edilməsi zamanı yaranır. SSRF boşluğu haqqında başqa bir bloq yazısı olacağından burada qısa bir məlumat veriləcəkdir. Boşluğun yaratdığı problemlər aşağıda qeyd olunmuşdur:
+
+    Daxili portların skan olunması
+    Bulud mühitində metadataların əldə edilməsi (169.254.169.254)
+    http://webhook.site vasitəsilə sistemin real İP adresinin və sorğunun yaradılması üçün istifadə olunan HTTP library adınının əldə edilməsi
+    Böyük həcmli faylların yüklənilməsi zamanı xidmətin təkzibi halının yaranması (OSİ Layer 7 DoS )
