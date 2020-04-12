@@ -1,5 +1,6 @@
 Sistemlərin funskionallığı genişləndikcə yazılan veb servislərin də həcmi böyüyür. Funksionallığın təhlükəsizliklə tərs mütənasib olduğunu nəzərə alsaq ciddi təhlükəsizlik boşluqlarınını yaranması qaçılmazdır. Psixoloji tərəfdən məsələyə yanaşsaq bəzi şirkətlər daha çox üzdə olan veb servislərə ( web applicationda) diqqət edirlər, nəinki mobil application üçün nəzərdə tutulmuş veb servislərə. Hətta bəziləri heç birində diqqət etmir :) Aşağıda APİ təhlüəkəsizliyi ilə bağlı bəzi mövzulara toxunacağıq.
 
+
 Köhnə versiya veb servislərin əlçatanlığı
 
 Yazılan veb servislər versiya üzrə yüksəldikcə köhnə versiya veb servisləri ləğv etmək lazımdır. Misal üçün, userə aid məlumatı İD üzrə qaytaran veb servis hal-hazırda /api/v2/get_user_data/{user_id} -dir və köhnə versiyada yaranmış access control ilə bağlı boşluq bu versiyada aradan qaldırılmışdır . /api/v1/get_user_data/{user_id} veb servisi aktiv olarsa hücum edən şəxs köhnə versiyadakı boşluğu asanlıqla istismar edə bilər.
